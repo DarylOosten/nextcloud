@@ -1,2 +1,46 @@
 ---
-# tasks file for ansible-role-skeleton/
+- name: Install Nextcloud
+  become: true
+  tags: install
+  block:
+
+    - name: Create nextcloud_config volume
+      docker_volume:
+        driver: "local"
+        driver_options:
+          type: nfs
+          o: "addr=nas.home,nolock,soft,rw"
+          device: :/volume3/nextcloud/test/config
+        volume_name: nextcloud_config
+
+    - name: Create nextcloud_data volume
+      docker_volume:
+        driver: "local"
+        driver_options:
+          type: nfs
+          o: "addr=nas.home,nolock,soft,rw"
+          device: :/volume3/nextcloud/test/data
+        volume_name: nextcloud_data
+
+    - name: Create Nextcloud container
+      community.docker.docker_container:
+        name: nextcloud
+        image: lscr.io/linuxserver/nextcloud:latest
+        pull: true
+        restart_policy: unless-stopped
+        volumes:
+          - nextcloud_config:/config
+          - nextcloud_data:/data
+        ports:
+          - 443:443
+        env:
+          TZ: Asia/Bangkok
+          PUID: "1034"
+          PGID: "65537"
+
+    - name: Allow HTTPS
+      community.general.ufw:
+        rule: allow
+        proto: tcp
+        port: '443'
+      notify: reload ufw
