@@ -31,8 +31,6 @@
         volumes:
           - nextcloud_config:/config
           - nextcloud_data:/data
-        ports:
-          - 443:443
         env:
           TZ: Asia/Bangkok
           PUID: "1034"
