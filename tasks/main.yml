@@ -26,6 +26,8 @@
       community.docker.docker_container:
         name: nextcloud
         image: lscr.io/linuxserver/nextcloud:latest
+        networks:
+          - name: reverse_proxy
         pull: true
         restart_policy: unless-stopped
         volumes:
