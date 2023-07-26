@@ -4,6 +4,10 @@
   tags: install
   block:
 
+    - name: Create nextcloud_net network
+      community.docker.docker_network:
+        name: nextcloud_net
+
     - name: Create mariadb_config volume
       docker_volume:
         driver: "local"
