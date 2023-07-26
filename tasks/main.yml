@@ -4,6 +4,34 @@
   tags: install
   block:
 
+    - name: Create mariadb_config volume
+      docker_volume:
+        driver: "local"
+        driver_options:
+          type: nfs
+          o: "addr=nas.home,nolock,soft,rw"
+          device: :/volume3/nextcloud/test/mariadb
+        volume_name: mariadb_config
+
+    - name: Create Mariadb container
+      community.docker.docker_container:
+        name: mariadb
+        image: lscr.io/linuxserver/mariadb:latest
+        networks:
+          - name: nextcloud_net
+        pull: true
+        restart_policy: unless-stopped
+        volumes:
+          - mariadb_config:/config
+        env:
+          TZ: Asia/Bangkok
+          PUID: "1034"
+          PGID: "65537"
+          MYSQL_ROOT_PASSWORD: "mariadbpassword"
+          MYSQL_DATABASE: "nextcloud"
+          MYSQL_USER: "ncuser"
+          MYSQL_PASSWORD: "ncpassword"
+
     - name: Create nextcloud_config volume
       docker_volume:
         driver: "local"
@@ -27,7 +55,7 @@
         name: nextcloud
         image: lscr.io/linuxserver/nextcloud:latest
         networks:
-          - name: reverse_proxy
+          - name: nextcloud_net
         pull: true
         restart_policy: unless-stopped
         volumes:
