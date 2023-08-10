@@ -31,7 +31,6 @@
           TZ: Asia/Bangkok
           PUID: "{{ puid }}"
           PGID: "{{ pgid }}"
-          UMASK: "022"
           MYSQL_ROOT_PASSWORD: "mariadbpassword"
           MYSQL_DATABASE: "nextcloud"
           MYSQL_USER: "ncuser"
