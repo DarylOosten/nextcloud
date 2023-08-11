@@ -20,7 +20,7 @@
     - name: Create Mariadb container
       community.docker.docker_container:
         name: mariadb
-        image: lscr.io/linuxserver/mariadb:10.11.3
+        image: lscr.io/linuxserver/mariadb:latest
         networks:
           - name: nextcloud_net
         pull: true
@@ -57,7 +57,7 @@
     - name: Create Nextcloud container
       community.docker.docker_container:
         name: nextcloud
-        image: lscr.io/linuxserver/nextcloud:27.0.0
+        image: lscr.io/linuxserver/nextcloud:latest
         networks:
           - name: nextcloud_net
         pull: true
@@ -71,7 +71,6 @@
           TZ: Asia/Bangkok
           PUID: "{{ puid }}"
           PGID: "{{ pgid }}"
-          UMASK: "022"
 
     - name: Allow HTTPS
       community.general.ufw:
