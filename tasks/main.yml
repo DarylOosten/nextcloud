@@ -13,7 +13,7 @@
         driver: "local"
         driver_options:
           type: nfs
-          o: "addr={{ nas }},rw,nfsvers=4,async"
+          o: "addr={{ nas }},rw"
           device: "{{ mariadb_nfs }}"
         volume_name: mariadb_config
 
@@ -41,7 +41,7 @@
         driver: "local"
         driver_options:
           type: nfs
-          o: "addr={{ nas }},rw,nfsvers=4,async"
+          o: "addr={{ nas }},rw"
           device: "{{ nextcloud_config_nfs }}"
         volume_name: nextcloud_config
 
@@ -50,7 +50,7 @@
         driver: "local"
         driver_options:
           type: nfs
-          o: "addr={{ nas }},rw,nfsvers=4,async"
+          o: "addr={{ nas }},rw"
           device: "{{ nextcloud_data_nfs }}"
         volume_name: nextcloud_data
 
