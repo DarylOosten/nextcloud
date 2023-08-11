@@ -20,7 +20,7 @@
     - name: Create Mariadb container
       community.docker.docker_container:
         name: mariadb
-        image: lscr.io/linuxserver/mariadb:latest
+        image: lscr.io/linuxserver/mariadb:10.11.4-r0-ls108
         networks:
           - name: nextcloud_net
         pull: true
@@ -57,7 +57,7 @@
     - name: Create Nextcloud container
       community.docker.docker_container:
         name: nextcloud
-        image: lscr.io/linuxserver/nextcloud:latest
+        image: lscr.io/linuxserver/nextcloud:27.0.1-ls261
         networks:
           - name: nextcloud_net
         pull: true
