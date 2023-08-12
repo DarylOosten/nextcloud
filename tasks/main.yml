@@ -58,6 +58,7 @@
       community.docker.docker_container:
         name: nextcloud
         image: lscr.io/linuxserver/nextcloud:latest
+        user: "{{ puid }}:{{ pgid }}"
         networks:
           - name: nextcloud_net
         pull: true
