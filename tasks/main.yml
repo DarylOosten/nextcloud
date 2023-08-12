@@ -4,58 +4,18 @@
   tags: install
   block:
 
-    - name: Add nextcloud group
-      ansible.builtin.group:
-        name: nextcloud
-        state: present
-
-    - name: Add Ansible user to nextcloud
-      ansible.builtin.user:
-        name: "{{ user }}"
-        groups: nextcloud
-        append: true
-
-    - name: Add nextcloud user
-      ansible.builtin.user:
-        name: nextcloud
-        group: nextcloud
-
-    - name: Add mariadb user
-      ansible.builtin.user:
-        name: mariadb
-        group: nextcloud
-
-    - name: Create nextcloud config directory
-      ansible.builtin.file:
-        path: /home/nextcloud/config
-        state: directory
-        mode: 0775
-        owner: nextcloud
-        group: nextcloud
-
-    - name: Create nextcloud data directory
-      ansible.builtin.file:
-        path: /home/nextcloud/data
-        state: directory
-        mode: 0775
-        owner: nextcloud
-        group: nextcloud
-
-    - name: Create mariadb data directory
-      ansible.builtin.file:
-        path: /home/mariadb/config
-        state: directory
-        mode: 0775
-        owner: mariadb
-        group: nextcloud
-
-    - name: Instantiate passwd database
-      getent:
-        database: passwd
-
     - name: Create nextcloud_net network
       community.docker.docker_network:
         name: nextcloud_net
+
+    - name: Create mariadb_config volume
+      docker_volume:
+        driver: "local"
+        driver_options:
+          type: nfs
+          o: "addr={{ nas }},rw,nfsvers=4,async"
+          device: "{{ mariadb_nfs }}"
+        volume_name: mariadb_config
 
     - name: Create Mariadb container
       community.docker.docker_container:
@@ -66,33 +26,52 @@
         pull: true
         restart_policy: unless-stopped
         volumes:
-          - /home/mariadb/config:/config
+          - mariadb_config:/config
         env:
           TZ: Asia/Bangkok
-          PUID: "{{ getent_passwd['mariadb'].1 }}"
-          PGID: "{{ getent_passwd['mariadb'].2 }}"
+          PUID: "{{ puid }}"
+          PGID: "{{ pgid }}"
           MYSQL_ROOT_PASSWORD: "mariadbpassword"
           MYSQL_DATABASE: "nextcloud"
           MYSQL_USER: "ncuser"
           MYSQL_PASSWORD: "ncpassword"
 
+    - name: Create nextcloud_config volume
+      docker_volume:
+        driver: "local"
+        driver_options:
+          type: nfs
+          o: "addr={{ nas }},rw,nfsvers=4,async"
+          device: "{{ nextcloud_config_nfs }}"
+        volume_name: nextcloud_config
+
+    - name: Create nextcloud_data volume
+      docker_volume:
+        driver: "local"
+        driver_options:
+          type: nfs
+          o: "addr={{ nas }},rw,nfsvers=4,async"
+          device: "{{ nextcloud_data_nfs }}"
+        volume_name: nextcloud_data
+
     - name: Create Nextcloud container
       community.docker.docker_container:
         name: nextcloud
         image: lscr.io/linuxserver/nextcloud:latest
+        user: "{{ puid }}:{{ pgid }}"
         networks:
           - name: nextcloud_net
         pull: true
         restart_policy: unless-stopped
         volumes:
-          - /home/nextcloud/config:/config
-          - /home/nextcloud/data:/data
+          - nextcloud_config:/config
+          - nextcloud_data:/data
         ports:
           - 443:443
         env:
           TZ: Asia/Bangkok
-          PUID: "{{ getent_passwd['nextcloud'].1 }}"
-          PGID: "{{ getent_passwd['nextcloud'].2 }}"
+          PUID: "{{ puid }}"
+          PGID: "{{ pgid }}"
 
     - name: Allow HTTPS
       community.general.ufw:
