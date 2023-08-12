@@ -20,11 +20,6 @@
         name: nextcloud
         group: nextcloud
 
-    - name: Add mariadb user
-      ansible.builtin.user:
-        name: mariadb
-        group: nextcloud
-
     - name: Create nextcloud config directory
       ansible.builtin.file:
         path: /home/nextcloud/config
@@ -43,10 +38,10 @@
 
     - name: Create mariadb data directory
       ansible.builtin.file:
-        path: /home/mariadb/config
+        path: /home/nextcloud/mariadb
         state: directory
         mode: 0775
-        owner: mariadb
+        owner: nextcloud
         group: nextcloud
 
     - name: Instantiate passwd database
@@ -66,11 +61,11 @@
         pull: true
         restart_policy: unless-stopped
         volumes:
-          - /home/mariadb/config:/config
+          - /home/nextcloud/mariadb:/config
         env:
           TZ: Asia/Bangkok
-          PUID: "{{ getent_passwd['mariadb'].1 }}"
-          PGID: "{{ getent_passwd['mariadb'].2 }}"
+          PUID: "{{ getent_passwd['nextcloud'].1 }}"
+          PGID: "{{ getent_passwd['nextcloud'].2 }}"
           MYSQL_ROOT_PASSWORD: "mariadbpassword"
           MYSQL_DATABASE: "nextcloud"
           MYSQL_USER: "ncuser"
