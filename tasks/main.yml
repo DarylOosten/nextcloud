@@ -106,6 +106,8 @@
         volumes:
           - /home/nextcloud/duplicati:/config
           - /home/nextcloud:/source
+        ports:
+          - 8200:8200
         env:
           TZ: Asia/Bangkok
           PUID: "{{ getent_passwd['nextcloud'].1 }}"
