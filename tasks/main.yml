@@ -152,5 +152,5 @@
       ansible.builtin.cron:
         name: "Resume nextcloud after backup"
         hour: "4"
-        minute: "0"
+        minute: "1"
         job: "sudo docker start nextcloud"
