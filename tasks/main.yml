@@ -44,6 +44,14 @@
         owner: nextcloud
         group: nextcloud
 
+    - name: Create duplicati config directory
+      ansible.builtin.file:
+        path: /home/nextcloud/duplicati
+        state: directory
+        mode: 0775
+        owner: nextcloud
+        group: nextcloud
+
     - name: Instantiate passwd database
       getent:
         database: passwd
@@ -89,9 +97,30 @@
           PUID: "{{ getent_passwd['nextcloud'].1 }}"
           PGID: "{{ getent_passwd['nextcloud'].2 }}"
 
-    - name: Allow HTTPS
+    - name: Create Duplicati container
+      community.docker.docker_container:
+        name: duplicati
+        image: lscr.io/linuxserver/duplicati:latest
+        pull: true
+        restart_policy: unless-stopped
+        volumes:
+          - /home/nextcloud/duplicati:/config
+          - /home/nextcloud:/source
+        env:
+          TZ: Asia/Bangkok
+          PUID: "{{ getent_passwd['nextcloud'].1 }}"
+          PGID: "{{ getent_passwd['nextcloud'].2 }}"
+
+    - name: Allow HTTPS connections
       community.general.ufw:
         rule: allow
         proto: tcp
         port: '443'
+      notify: reload ufw
+
+    - name: Allow duplicati connections
+      community.general.ufw:
+        rule: allow
+        proto: tcp
+        port: '8200'
       notify: reload ufw
