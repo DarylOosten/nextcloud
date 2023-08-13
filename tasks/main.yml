@@ -126,3 +126,31 @@
         proto: tcp
         port: '8200'
       notify: reload ufw
+
+    - name: Setup cron job to stop nextcloud for backup
+      ansible.builtin.cron:
+        name: "Pause nextcloud for backup"
+        hour: "3"
+        minute: "0"
+        job: "sudo docker stop nextcloud"
+
+    - name: Setup cron job to stop mariadb for backup
+      ansible.builtin.cron:
+        name: "Pause mariadb for backup"
+        hour: "3"
+        minute: "1"
+        job: "sudo docker stop mariadb"
+
+    - name: Setup cron job to start mariadb after backup
+      ansible.builtin.cron:
+        name: "Resume mariadb after backup"
+        hour: "4"
+        minute: "0"
+        job: "sudo docker start mariadb"
+
+    - name: Setup cron job to start nextcloud after backup
+      ansible.builtin.cron:
+        name: "Resume nextcloud after backup"
+        hour: "4"
+        minute: "0"
+        job: "sudo docker start nextcloud"
