@@ -86,8 +86,6 @@
         volumes:
           - /home/nextcloud/config:/config
           - /home/nextcloud/data:/data
-        ports:
-          - 443:443
         env:
           TZ: Asia/Bangkok
           PUID: "{{ getent_passwd['nextcloud'].1 }}"
@@ -104,26 +102,10 @@
         volumes:
           - /home/nextcloud/duplicati:/config
           - /home/nextcloud:/source
-        ports:
-          - 8200:8200
         env:
           TZ: Asia/Bangkok
           PUID: "{{ getent_passwd['nextcloud'].1 }}"
           PGID: "{{ getent_passwd['nextcloud'].2 }}"
-
-    - name: Allow HTTPS connections
-      community.general.ufw:
-        rule: allow
-        proto: tcp
-        port: '443'
-      notify: reload ufw
-
-    - name: Allow duplicati connections
-      community.general.ufw:
-        rule: allow
-        proto: tcp
-        port: '8200'
-      notify: reload ufw
 
     - name: Setup cron job to stop nextcloud for backup
       ansible.builtin.cron:
