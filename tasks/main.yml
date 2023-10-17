@@ -24,7 +24,7 @@
       ansible.builtin.file:
         path: /home/nextcloud/config
         state: directory
-        mode: 0775
+        mode: 0770
         owner: nextcloud
         group: nextcloud
 
@@ -32,7 +32,7 @@
       ansible.builtin.file:
         path: /home/nextcloud/data
         state: directory
-        mode: 0775
+        mode: 0770
         owner: nextcloud
         group: nextcloud
 
@@ -40,7 +40,7 @@
       ansible.builtin.file:
         path: /home/nextcloud/mariadb
         state: directory
-        mode: 0775
+        mode: 0770
         owner: nextcloud
         group: nextcloud
 
