@@ -11,4 +11,10 @@ galaxy_info:
       versions:
         - jammy
   galaxy_tags: []
-dependencies: []
+dependencies:
+  - role: backup-staging
+    vars:
+      backup:
+        user: nextcloud
+        group: nextcloud
+        dirs: ['config', 'data', 'mariadb']
