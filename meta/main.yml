@@ -12,7 +12,7 @@ galaxy_info:
         - jammy
   galaxy_tags: []
 dependencies:
-  - role: backup-staging
+  - role: docker-backup
     vars:
       backup:
         user: nextcloud
