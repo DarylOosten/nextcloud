@@ -9,12 +9,6 @@
         name: nextcloud
         state: present
 
-    - name: Add Ansible user to nextcloud
-      ansible.builtin.user:
-        name: "{{ user }}"
-        groups: nextcloud
-        append: true
-
     - name: Add nextcloud user
       ansible.builtin.user:
         name: nextcloud
