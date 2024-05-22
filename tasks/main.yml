@@ -42,12 +42,16 @@
       getent:
         database: passwd
 
+    - name: Create nextcloud network
+      community.docker.docker_network:
+        name: nextcloud_net
+
     - name: Create Mariadb container
       community.docker.docker_container:
         name: mariadb
         image: lscr.io/linuxserver/mariadb:latest
         networks:
-          - name: proxy_net
+          - name: nextcloud_net
         pull: true
         restart_policy: unless-stopped
         volumes:
@@ -67,6 +71,7 @@
         image: lscr.io/linuxserver/nextcloud:latest
         networks:
           - name: proxy_net
+          - name: nextcloud_net
         pull: true
         restart_policy: unless-stopped
         volumes:
