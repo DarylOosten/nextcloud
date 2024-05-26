@@ -48,7 +48,7 @@
 
     - name: Create Mariadb container
       community.docker.docker_container:
-        name: mariadb
+        name: nextcloud_mariadb
         image: lscr.io/linuxserver/mariadb:latest
         networks:
           - name: nextcloud_net
